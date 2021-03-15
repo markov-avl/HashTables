@@ -1,32 +1,50 @@
-#ifndef HASHTABLES_FRIDGE_H
-#define HASHTABLES_FRIDGE_H
-#include <iostream>
+#ifndef HASH_TABLE_TABLEPRODUCTS_H
+#define HASH_TABLE_TABLEPRODUCTS_H
+#include "product.h"
 
 
-struct Product {
-    std::string data;
+class TableCell {
+public:
     bool isFree = true;
+    bool isNeverTaken = true;
+    Product* product {};
 };
 
 
 class Fridge {
 private:
-    static const int defaultSize = 256;
+    static const unsigned int defaultSize = 50;
     unsigned int size;
-    unsigned int count;
-    Product* table;
-    unsigned int hash1(Product product);
-    unsigned int hash2(unsigned int address);
+    unsigned int takenCells;
+    TableCell* table;
+
+    [[nodiscard]] unsigned int hash1(const std::string&) const;
+    [[nodiscard]] unsigned int hash2(unsigned int, unsigned int) const;
+    static std::string getKey(const Product&);
+
 public:
-    explicit Fridge(unsigned int n = Fridge::defaultSize);
+    explicit Fridge(unsigned int);
     ~Fridge();
-    int add(Product product);
-    int del(Product product);
-    int search(Product product);
+    int add(const Product&);
+    int remove(const Product&);
+    long long find(const Product &product);
+    friend std::ostream &operator<<(std::ostream&, Fridge&);
+
+    enum {
+        SUCCESS = -1,
+        OVERFLOWED = -2,
+        EMPTY = -3,
+        FOUND_IDENTICAL = -4,
+        FOUND = -5,
+        NOT_FOUND = -6
+    };
 };
 
 
-std::ostream& operator<<(std::ostream& out, Fridge& fridge);
-
-
 #endif
+
+
+
+
+
+
