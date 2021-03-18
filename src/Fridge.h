@@ -20,6 +20,7 @@ private:
 
     [[nodiscard]] unsigned int hash1(const std::string&) const;
     [[nodiscard]] unsigned int hash2(unsigned int, unsigned int) const;
+    void rehash();
     static std::string getKey(const Product&);
 
 public:
@@ -29,6 +30,9 @@ public:
     int remove(const Product&);
     long long find(const Product &product);
     friend std::ostream &operator<<(std::ostream&, Fridge&);
+
+    // test method
+    TableCell* getTable();
 
     enum {
         SUCCESS = -1,

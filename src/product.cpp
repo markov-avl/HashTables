@@ -18,7 +18,7 @@ std::ostream &operator<<(std::ostream &out, const Product &product) {
 }
 
 bool operator==(const Product &a, const Product &b) {
-    return b.name == a.name && a.purchaseDate == b.purchaseDate && a.expirationDate == b.expirationDate &&
+    return a.name == b.name && a.purchaseDate == b.purchaseDate && a.expirationDate == b.expirationDate &&
            a.barcode == b.barcode;
 }
 
