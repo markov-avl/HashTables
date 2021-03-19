@@ -17,8 +17,8 @@ Fridge::~Fridge() {
     delete[] table;
 }
 
-unsigned int Fridge::hash1(const std::string &key) const {
-    unsigned int hash;
+unsigned int Fridge::hash1(const std::string& key) const {
+    unsigned int hash = 0;
     for (char i : key) {
         hash += i;
     }
@@ -68,7 +68,8 @@ int Fridge::add(const Product &product) {
     if (takenCells == size) {
         return OVERFLOWED;
     }
-    if (takenCells > 0 && find(product) > SUCCESS) {
+    // он файндом находит нужный индекс - то есть нужно это использовать, чтобы он 2 раза не искал индекс
+    if (takenCells > 0 && find(product) >= 0) {
         return FOUND_IDENTICAL;
     }
     // находим индекс с помощью хеширования
@@ -106,9 +107,9 @@ int Fridge::remove(const Product& product) {
 
 long long Fridge::find(const Product& product) {
     if (takenCells == 0) {
-        return NOT_FOUND;
+        return (long long)NOT_FOUND;
     }
-    unsigned int index;
+    long long index;
     if (takenCells < size) {
         std::string key = getKey(product);
         unsigned int step = 1;
@@ -116,11 +117,11 @@ long long Fridge::find(const Product& product) {
         while (!table[index].isFree && product != *table[index].product) {
             index = hash2(index, step++);
         }
-        return (table[index].isFree ? NOT_FOUND : index);
+        return (table[index].isFree ? (long long)NOT_FOUND : index);
     } else {
         index = 0;
         for (; index < size && product != *table[index].product; ++index);
-        return (index == size ? NOT_FOUND : index);
+        return (index == size ? (long long)NOT_FOUND : index);
     }
 }
 
