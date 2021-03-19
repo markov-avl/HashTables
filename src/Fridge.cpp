@@ -10,7 +10,7 @@ Fridge::Fridge(unsigned int n) {
 
 Fridge::~Fridge() {
     for (int i = 0; i < size; ++i) {
-        if (!table[i].isNeverTaken) {
+        if (!table[i].hasNeverTaken) {
             delete table[i].product;
         }
     }
@@ -36,7 +36,7 @@ void Fridge::rehash() {
     auto* newTable = new TableCell[size];
 
     for (int i = 0; i < size; ++i) {
-        if (!table[i].isNeverTaken) {
+        if (!table[i].hasNeverTaken) {
             if (table[i].isFree) {
                 delete table[i].product;
             } else {
@@ -47,7 +47,7 @@ void Fridge::rehash() {
                     index = hash2(index, step++);
                 }
                 newTable[index].isFree = false;
-                newTable[index].isNeverTaken = false;
+                newTable[index].hasNeverTaken = false;
                 newTable[index].product = table[i].product;
             }
         }
@@ -80,11 +80,11 @@ int Fridge::add(const Product &product) {
     }
     // добавляем запись
     ++takenCells;
-    if (!table[index].isNeverTaken) {
+    if (!table[index].hasNeverTaken) {
         delete table[index].product;
     }
     table[index].isFree = false;
-    table[index].isNeverTaken = false;
+    table[index].hasNeverTaken = false;
     table[index].product = new Product(product.name, product.purchaseDate, product.expirationDate, product.barcode);
     return SUCCESS;
 }
@@ -106,31 +106,21 @@ int Fridge::remove(const Product& product) {
 
 long long Fridge::find(const Product& product) {
     if (takenCells == 0) {
-        return EMPTY;
-    } else {
+        return NOT_FOUND;
+    }
+    unsigned int index;
+    if (takenCells < size) {
         std::string key = getKey(product);
-        unsigned int index = hash1(key);
         unsigned int step = 1;
-        if (takenCells < size) {
-            while (!table[index].isFree && product != *table[index].product) {
-                index = hash2(index, step++);
-            }
-            if (table[index].isFree) {
-                return NOT_FOUND;
-            } else {
-                return index;
-            }
-        } else {
-            int i = 0;
-            for (; i < size && product != *table[index].product; ++i) {
-                index = hash2(index, step++);
-            }
-            if (i == size) {
-                return NOT_FOUND;
-            } else {
-                return index;
-            }
+        index = hash1(key);
+        while (!table[index].isFree && product != *table[index].product) {
+            index = hash2(index, step++);
         }
+        return (table[index].isFree ? NOT_FOUND : index);
+    } else {
+        index = 0;
+        for (; index < size && product != *table[index].product; ++index);
+        return (index == size ? NOT_FOUND : index);
     }
 }
 

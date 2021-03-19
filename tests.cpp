@@ -5,8 +5,8 @@
 
 TEST(FridgeAdd, addingProducts) {
     unsigned int n = 10;
-
     Fridge fridge = Fridge(n);                                              // hash1 | hash2   | result
+
     fridge.add(Product("Молоко", "16.03.21", "23.03.21", 4239865327808));   // 5     | -       | 5
     fridge.add(Product("Хлеб",   "17.03.21", "18.03.21", 7702912383631));   // 1     | -       | 1
     fridge.add(Product("Кефир",  "17.03.21", "23.03.21", 9108318280083));   // 5     | 6       | 6
@@ -20,6 +20,8 @@ TEST(FridgeAdd, addingProducts) {
     EXPECT_EQ(fridge.getTable()[6].product->name, "Кефир");
     EXPECT_EQ(fridge.getTable()[8].product->name, "Чай");
     EXPECT_EQ(fridge.getTable()[9].product->name, "Вода");
+
+    fridge.~Fridge();
 }
 
 TEST(FridgeAdd, addExitCodes) {
@@ -42,6 +44,8 @@ TEST(FridgeAdd, addExitCodes) {
     EXPECT_EQ(fridge.add(Product("Вода",   "15.03.21", "15.06.21", 1835370248840)), Fridge::OVERFLOWED);
     // adding 1 existing extra record;
     EXPECT_EQ(fridge.add(Product("Молоко", "16.03.21", "23.03.21", 4239865327808)), Fridge::OVERFLOWED);
+
+    fridge.~Fridge();
 }
 
 

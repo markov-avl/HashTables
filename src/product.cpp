@@ -23,6 +23,5 @@ bool operator==(const Product &a, const Product &b) {
 }
 
 bool operator!=(const Product &a, const Product &b) {
-    return a.name != b.name || a.purchaseDate != b.purchaseDate || a.expirationDate != b.expirationDate ||
-           a.barcode != b.barcode;
+    return !(a == b);
 }

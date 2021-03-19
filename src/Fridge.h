@@ -6,7 +6,7 @@
 class TableCell {
 public:
     bool isFree = true;
-    bool isNeverTaken = true;
+    bool hasNeverTaken = true;
     Product* product {};
 };
 
