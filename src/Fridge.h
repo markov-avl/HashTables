@@ -31,7 +31,7 @@ public:
     long long find(const Product &product);
     friend std::ostream &operator<<(std::ostream&, Fridge&);
 
-    // test method
+    // method for tests
     TableCell* getTable();
 
     enum {

@@ -68,18 +68,15 @@ int Fridge::add(const Product &product) {
     if (takenCells == size) {
         return OVERFLOWED;
     }
-    // он файндом находит нужный индекс - то есть нужно это использовать, чтобы он 2 раза не искал индекс
     if (takenCells > 0 && find(product) >= 0) {
         return FOUND_IDENTICAL;
     }
-    // находим индекс с помощью хеширования
     std::string key = getKey(product);
     unsigned int index = hash1(key);
     unsigned int step = 1;
     while (!table[index].isFree) {
         index = hash2(index, step++);
     }
-    // добавляем запись
     ++takenCells;
     if (!table[index].hasNeverTaken) {
         delete table[index].product;
@@ -126,13 +123,16 @@ long long Fridge::find(const Product& product) {
 }
 
 std::ostream &operator<<(std::ostream &out, Fridge& fridge) {
-    if (fridge.size == 0) {
-        out << "The fridge is empty" << std::endl;
+    if (fridge.takenCells == 0) {
+        out << "The fridge is empty";
     } else {
         unsigned int k = 1;
         for (unsigned int i = 0; i < fridge.size; ++i) {
             if (!fridge.table[i].isFree) {
-                out << k++ << '.' << std::endl << *fridge.table[i].product << std::endl;
+                if (k != 1) {
+                    out << std::endl;
+                }
+                out << k++ << '.' << std::endl << *fridge.table[i].product;
             }
         }
     }
