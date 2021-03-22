@@ -76,6 +76,30 @@ TEST(FridgeAdd, AddExitCodes) {
     EXPECT_EQ(fridge.add(product0), Fridge::OVERFLOWED);
 }
 
+TEST(FridgeAdd, AddCycling) {
+    unsigned int n = 5;
+    auto fridge = Fridge(n);
+
+    // adding 2 products with hash1 = 0
+    fridge.add(Product("Продукт", "09", "xx.xx.xx", 1)); // hashes as 0
+    fridge.add(Product("Продукт", "18", "xx.xx.xx", 1)); // hashes as 1
+    fridge.add(Product("Продукт", "27", "xx.xx.xx", 1)); // hashes as 4
+
+    // hash2 product {name="Продукт", purchaseDate="36"), indexes 0, 1 and 4 are taken
+    // try 1  -> 1 (+1 % 5)
+    // try 2  -> 0 (+4 % 5)
+    // try 3  -> 4 (+9 % 5)
+    // try 4  -> 0 (+16 % 5)
+    // try 5  -> 0 (+25 % 5)
+    // try 6  -> 1 (+36 % 5)
+    // try 7  -> 0 (+49 % 5)
+    // try 8  -> 4 (+64 % 5)
+    // try 9  -> 0 (+81 % 5)
+    // try 10 -> 0 (+100 % 5)
+    // and we see that this enteres into the cycle
+
+    EXPECT_EQ(fridge.add(Product("Продукт", "36", "xx.xx.xx", 1)), Fridge::HASH_ERROR);
+}
 
 TEST(FridgeRemove, RemoveProducts) {
     unsigned int n = 5;
@@ -145,7 +169,7 @@ TEST(FridgeRemove, RemoveExitCodes) {
     auto fridge = Fridge(n);
 
     // trying to remove something from fridge when it's empty
-    EXPECT_EQ(fridge.remove(product0), Fridge::EMPTY);
+    EXPECT_EQ(fridge.remove(product0), Fridge::NOT_FOUND);
 
     // adding 5 different products
     fridge.add(product0);
@@ -178,7 +202,7 @@ TEST(FridgeRemove, RemoveExitCodes) {
     EXPECT_EQ(fridge.remove(product4), Fridge::SUCCESS);
 
     // checking that fridge is empty again
-    EXPECT_EQ(fridge.remove(product4), Fridge::EMPTY);
+    EXPECT_EQ(fridge.remove(product4), Fridge::NOT_FOUND);
 
     // checking that after removing we can add products again
     EXPECT_EQ(fridge.add(product1), Fridge::SUCCESS);

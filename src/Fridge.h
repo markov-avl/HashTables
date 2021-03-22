@@ -16,6 +16,7 @@ private:
     static const unsigned int defaultSize = 50;
     unsigned int size;
     unsigned int takenCells;
+    unsigned long long maxTries;
     TableCell* table;
 
     [[nodiscard]] unsigned int hash1(const std::string&) const;
@@ -28,7 +29,7 @@ public:
     ~Fridge();
     int add(const Product&);
     int remove(const Product&);
-    long long find(const Product &product);
+    long long find(const Product&);
     friend std::ostream &operator<<(std::ostream&, Fridge&);
 
     // method for tests
@@ -37,10 +38,9 @@ public:
     enum {
         SUCCESS = -1,
         OVERFLOWED = -2,
-        EMPTY = -3,
+        HASH_ERROR = -3,
         FOUND_IDENTICAL = -4,
-        FOUND = -5,
-        NOT_FOUND = -6
+        NOT_FOUND = -5
     };
 };
 

@@ -5,6 +5,7 @@
 Fridge::Fridge(unsigned int n) {
     this->size = n < 1 ? defaultSize : n;
     this->takenCells = 0;
+    this->maxTries = 2 * this->size;
     this->table = new TableCell[n];
 }
 
@@ -74,8 +75,11 @@ int Fridge::add(const Product &product) {
     std::string key = getKey(product);
     unsigned int index = hash1(key);
     unsigned int step = 1;
-    while (!table[index].isFree) {
+    while (!table[index].isFree && step <= maxTries) {
         index = hash2(index, step++);
+    }
+    if (step > maxTries) {
+        return HASH_ERROR;
     }
     ++takenCells;
     if (!table[index].hasNeverTaken) {
@@ -89,7 +93,7 @@ int Fridge::add(const Product &product) {
 
 int Fridge::remove(const Product& product) {
     if (takenCells == 0) {
-        return EMPTY;
+        return NOT_FOUND;
     }
     long long index = find(product);
     if (index == NOT_FOUND) {
